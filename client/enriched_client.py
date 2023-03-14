@@ -9,18 +9,15 @@ class EnrichedClient(Client):
     EnrichedClient is a Client with additional features.
     """
 
-    def get_unavailable_products(self, per_page: int = 20) -> List[Product]:
+    def get_all_products(self, per_page: int = 20) -> List[Product]:
         """
-        Get all unavailable products.
+        Get all products.
         This method calls get_products() multiple times until all products are fetched.
-
-        Definition of unavailable product:
-        - Product is not active, or
-        - Product has no inventory
 
         :param per_page: The number of items per page.
         :return:
         """
+
         products: List[Product] = []
         page_no = 1
 
@@ -35,6 +32,22 @@ class EnrichedClient(Client):
 
             page_no += 1
 
+        return products
+
+    def get_unavailable_products(self, per_page: int = 20) -> List[Product]:
+        """
+        Get all unavailable products.
+        This method calls get_products() multiple times until all products are fetched.
+
+        Definition of unavailable product:
+        - Product is not active, or
+        - Product has no inventory
+
+        :param per_page: The number of items per page.
+        :return: List[Product]
+        """
+
+        products = self.get_all_products(per_page)
         return [product for product in products
                 if (not product.merchant_product.active) or (product.inventory.available_quantity == 0)
                 ]
