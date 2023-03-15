@@ -50,8 +50,25 @@ class Client:
         response = self._get("/products", params=params)
         return PaginatedResponse.from_dict(response, Product)
 
+    def update_product(self, product: Product) -> Product:
+        """
+        Update a product.
+        :param product: Product to update.
+        :return: None
+        """
+        response = self._put(f"/products/{product.id}", product.to_dict())
+        return Product.from_dict(response)
+
     def _get(self, path: str, params: dict = None) -> dict:
         response = requests.get(self.base_url + path, params=params, cookies=self.cookies.to_dict())
+        if response.status_code != 200:
+            error = response.json()
+            raise MedisendClientError(response.status_code, error["code"], error["message"])
+
+        return response.json()
+
+    def _put(self, path: str, data: dict) -> dict:
+        response = requests.put(self.base_url + path, json=data, cookies=self.cookies.to_dict())
         if response.status_code != 200:
             error = response.json()
             raise MedisendClientError(response.status_code, error["code"], error["message"])

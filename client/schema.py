@@ -101,7 +101,7 @@ class Product:
     image_url: str
     status: str
     display: bool
-    recommended_merchant_price: Optional[float]
+    recommended_merchant_price: Optional[str]
     uom: str
     visual_cues: List[str]
     images: List[Image]
